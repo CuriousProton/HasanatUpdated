@@ -95,33 +95,29 @@ const styles = StyleSheet.create({
   },
 
   hadithContainer: {
-    backgroundColor: colors.background.primary,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderLeftWidth: 2,
+    marginTop: spacing.xs,
   },
 
   quoteIcon: {
-    fontSize: 16,
-    marginBottom: spacing.xs,
+    fontSize: 12,
+    opacity: 0.7,
   },
 
   hadithText: {
-    fontSize: fontSize.md,
-    color: colors.text.primary,
-    lineHeight: 20,
+    fontSize: fontSize.xs,
+    color: colors.text.secondary,
+    lineHeight: 16,
     fontStyle: 'italic',
-    marginBottom: spacing.xs,
   },
 
   hadithReference: {
-    fontSize: fontSize.xs,
-    color: colors.text.secondary,
+    fontSize: 10,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: spacing.xs,
   },

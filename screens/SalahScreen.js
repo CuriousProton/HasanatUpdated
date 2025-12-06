@@ -45,13 +45,31 @@ export const SalahScreen = ({ onBack, onRecord }) => {
       <Header title="🕌 Salah" showBack onBack={onBack} />
 
       <ScrollView contentContainerStyle={commonStyles.scrollContent}>
-        {/* Hadith Card */}
+        {/* General Hadith about Salah */}
         <BigHadithCard
           prayer={{
-            hadith: '"Prayer in congregation is twenty-seven times superior to prayer offered alone."',
-            reference: 'Sahih al-Bukhari 645',
+            hadith: '"The first matter that the slave will be brought to account for on the Day of Judgment is the prayer. If it is sound, then the rest of his deeds will be sound. And if it is bad, then the rest of his deeds will be bad."',
+            reference: 'Sunan an-Nasa\'i 465',
           }}
         />
+
+        {/* Selected Prayer's Specific Hadith */}
+        {selectedPrayer && (
+          <View style={styles.prayerHadithCard}>
+            <Text style={styles.prayerHadithTitle}>💡 About {selectedPrayer.name} Prayer</Text>
+            <Text style={styles.prayerHadithText}>
+              {selectedPrayer.hadith}
+            </Text>
+            <Text style={styles.prayerHadithReference}>
+              — {selectedPrayer.reference}
+            </Text>
+            <View style={styles.importanceBox}>
+              <Text style={styles.importanceText}>
+                ⭐ {selectedPrayer.importance}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Prayer Selection */}
         <Text style={commonStyles.label}>Select Prayer</Text>
@@ -297,5 +315,49 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.text.secondary,
     lineHeight: 20,
+  },
+
+  prayerHadithCard: {
+    backgroundColor: '#eff6ff',
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.salah,
+  },
+
+  prayerHadithTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.salah,
+    marginBottom: spacing.md,
+  },
+
+  prayerHadithText: {
+    fontSize: fontSize.md,
+    color: colors.text.primary,
+    lineHeight: 22,
+    fontStyle: 'italic',
+    marginBottom: spacing.sm,
+  },
+
+  prayerHadithReference: {
+    fontSize: fontSize.sm,
+    color: colors.text.secondary,
+    textAlign: 'right',
+    marginBottom: spacing.md,
+  },
+
+  importanceBox: {
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    alignItems: 'center',
+  },
+
+  importanceText: {
+    fontSize: fontSize.sm,
+    color: colors.salah,
+    fontWeight: fontWeight.semibold,
   },
 });

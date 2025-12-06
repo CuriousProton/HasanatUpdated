@@ -18,6 +18,11 @@ import { ReferencesScreen } from './screens/ReferencesScreen';
 
 // Utils
 import { loadHasanat, saveHasanat } from './utils/storage';
+import {
+  registerForPushNotifications,
+  scheduleDailyNotification,
+  updateDailyNotification
+} from './utils/notifications';
 
 // Styles
 import { colors } from './styles/theme';
@@ -26,14 +31,31 @@ export default function App() {
   const [currentView, setCurrentView] = useState('home');
   const [hasanat, setHasanat] = useState([]);
 
-  // Load data on mount
+  // Load data and setup notifications on mount
   useEffect(() => {
-    const loadData = async () => {
+    const initializeApp = async () => {
+      // Load hasanat data
       const data = await loadHasanat();
       setHasanat(data);
+
+      // Request notification permissions
+      const permissionGranted = await registerForPushNotifications();
+
+      if (permissionGranted) {
+        // Schedule daily notification at 9 PM
+        await scheduleDailyNotification(data);
+      }
     };
-    loadData();
+
+    initializeApp();
   }, []);
+
+  // Update notification whenever hasanat changes
+  useEffect(() => {
+    if (hasanat.length > 0) {
+      updateDailyNotification(hasanat);
+    }
+  }, [hasanat]);
 
   // Add new hasanah entry
   const addHasanah = async (entry) => {

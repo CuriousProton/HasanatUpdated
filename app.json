@@ -23,7 +23,11 @@
       "adaptiveIcon": {
         "backgroundColor": "#4A90E2"
       },
-      "package": "com.hasanattracker.app"
+      "package": "com.hasanattracker.app",
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM"
+      ]
     },
     "web": {
       "bundler": "metro"

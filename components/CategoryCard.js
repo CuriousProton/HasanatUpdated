@@ -7,28 +7,28 @@ import { colors, spacing, borderRadius, fontSize, fontWeight, shadows } from '..
 
 export const CategoryCard = ({ category, onPress }) => (
   <TouchableOpacity
-    style={styles.card}
+    style={[styles.card, { backgroundColor: category.lightColor }]}
     onPress={onPress}
     activeOpacity={0.7}
   >
-    {/* Top colored bar */}
+    {/* Top colored bar - Thicker and more prominent */}
     <View style={[styles.topBar, { backgroundColor: category.color }]} />
 
     {/* Content */}
     <View style={styles.content}>
       {/* Icon and Title Row */}
       <View style={styles.header}>
-        <View style={[styles.iconCircle, { backgroundColor: category.color + '20' }]}>
+        <View style={[styles.iconCircle, { backgroundColor: category.color }]}>
           <Text style={styles.icon}>{category.icon}</Text>
         </View>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{category.title}</Text>
-          <Text style={styles.tapText}>Tap to record</Text>
+          <Text style={[styles.title, { color: category.color }]}>{category.title}</Text>
+          <Text style={styles.tapText}>Tap to record →</Text>
         </View>
       </View>
 
       {/* Hadith Quote */}
-      <View style={styles.hadithContainer}>
+      <View style={[styles.hadithContainer, { borderLeftColor: category.color }]}>
         <Text style={styles.quoteIcon}>💬</Text>
         <Text style={styles.hadithText}>"{category.hadith}"</Text>
         <Text style={styles.hadithReference}>— {category.reference}</Text>
@@ -39,15 +39,14 @@ export const CategoryCard = ({ category, onPress }) => (
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.background.primary,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
     overflow: 'hidden',
-    ...shadows.medium,
+    ...shadows.large,
   },
 
   topBar: {
-    height: 4,
+    height: 6,
     width: '100%',
   },
 
@@ -62,16 +61,21 @@ const styles = StyleSheet.create({
   },
 
   iconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
   icon: {
-    fontSize: 28,
+    fontSize: 32,
   },
 
   titleContainer: {
@@ -91,11 +95,15 @@ const styles = StyleSheet.create({
   },
 
   hadithContainer: {
-    backgroundColor: colors.background.tertiary,
+    backgroundColor: colors.background.primary,
     borderRadius: borderRadius.md,
     padding: spacing.md,
-    borderLeftWidth: 3,
-    borderLeftColor: colors.border.medium,
+    borderLeftWidth: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 1,
   },
 
   quoteIcon: {

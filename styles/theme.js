@@ -2,13 +2,13 @@
 // Design system: colors, spacing, typography
 
 export const colors = {
-  // Category colors
-  salah: '#3b82f6',
-  quran: '#10b981',
-  charity: '#f59e0b',
-  dhikr: '#ec4899',
-  fasting: '#8b5cf6',
-  kindness: '#06b6d4',
+  // Category colors - Enhanced vibrant versions
+  salah: '#2563eb',      // Vibrant blue
+  quran: '#059669',      // Rich emerald green
+  charity: '#f59e0b',    // Bright amber
+  dhikr: '#db2777',      // Bold pink
+  fasting: '#7c3aed',    // Deep purple
+  kindness: '#0891b2',   // Cyan
   references: '#059669',
   
   // UI colors

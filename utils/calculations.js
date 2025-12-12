@@ -10,21 +10,31 @@
  */
 export const calculateQuranReward = (surah, fromAyah, toAyah) => {
   if (!surah) return null;
-  
+
   // If reading full surah
   if (!fromAyah && !toAyah) {
     const estimatedHasanat = surah.letters * 10;
     return `~${estimatedHasanat.toLocaleString()} hasanat minimum (10 per letter)`;
   }
-  
+
   // If reading specific ayahs
   const from = parseInt(fromAyah) || 1;
   const to = parseInt(toAyah) || surah.ayahs;
+
+  // Validate ayah range
+  if (from > to) {
+    return `Invalid range (from ${from} to ${to})`;
+  }
+
+  if (from < 1 || to > surah.ayahs) {
+    return `Invalid range (surah has ${surah.ayahs} ayahs)`;
+  }
+
   const ayahCount = to - from + 1;
   const avgLettersPerAyah = Math.floor(surah.letters / surah.ayahs);
   const estimatedLetters = ayahCount * avgLettersPerAyah;
   const estimatedHasanat = estimatedLetters * 10;
-  
+
   return `~${estimatedHasanat.toLocaleString()} hasanat minimum (10 per letter)`;
 };
 

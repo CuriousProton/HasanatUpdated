@@ -4,13 +4,12 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 import { Header } from '../components/Header';
-import { SmallHadithCard } from '../components/HadithCard';
 import { fastingTypes, getFastingReward } from '../data/fasting';
-import { fastingHadithCards } from '../data/hadiths';
-import { colors, spacing, fontSize, fontWeight, borderRadius } from '../styles/theme';
+import { fastingHadiths } from '../data/hadiths';
+import { colors, spacing, fontSize, fontWeight, borderRadius, shadows } from '../styles/theme';
 import { commonStyles } from '../styles/commonStyles';
 
-export const FastingScreen = ({ onBack, onRecord }) => {
+export const FastingScreen = ({ onBack, onRecord, onNavigate }) => {
   const [selectedType, setSelectedType] = useState(null);
   const [notes, setNotes] = useState('');
 
@@ -44,11 +43,33 @@ export const FastingScreen = ({ onBack, onRecord }) => {
       <Header title="☀️ Fasting" showBack onBack={onBack} />
 
       <ScrollView contentContainerStyle={commonStyles.scrollContent}>
-        {/* Hadith Cards */}
-        <View style={styles.hadithSection}>
-          {fastingHadithCards.map((hadith, index) => (
-            <SmallHadithCard key={index} hadith={hadith} index={index} />
-          ))}
+        {/* Main Hadith - Always visible */}
+        <View style={styles.mainHadithSection}>
+          {/* Main Hadith Card - About rewards of fasting */}
+          <View style={styles.mainHadithCard}>
+            <Text style={styles.mainHadithTitle}>☀️ Reward of Fasting</Text>
+            <Text style={styles.mainHadithText}>
+              "{fastingHadiths[0].hadith}"
+            </Text>
+            <View style={styles.mainHadithFooter}>
+              <Text style={styles.mainHadithReward}>🎁 {fastingHadiths[0].reward}</Text>
+              <Text style={styles.mainHadithReference}>— {fastingHadiths[0].reference}</Text>
+            </View>
+          </View>
+
+          {/* Navigate to Rewards Screen */}
+          {onNavigate && (
+            <TouchableOpacity
+              style={styles.rewardsSectionHeader}
+              onPress={() => onNavigate('fasting-rewards')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.rewardsSectionTitle}>
+                📚 More Rewards of Fasting
+              </Text>
+              <Text style={styles.navigateIcon}>→</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Fasting Type Selection */}
@@ -162,8 +183,81 @@ export const FastingScreen = ({ onBack, onRecord }) => {
 };
 
 const styles = StyleSheet.create({
-  hadithSection: {
-    marginBottom: spacing.lg,
+  // Main Hadith Section
+  mainHadithSection: {
+    marginBottom: spacing.xl,
+  },
+
+  // Main Hadith Card
+  mainHadithCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.fasting,
+    ...shadows.medium,
+  },
+
+  mainHadithTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.fasting,
+    marginBottom: spacing.md,
+  },
+
+  mainHadithText: {
+    fontSize: fontSize.base,
+    color: colors.text.primary,
+    lineHeight: 22,
+    fontStyle: 'italic',
+    marginBottom: spacing.md,
+  },
+
+  mainHadithFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+
+  mainHadithReward: {
+    fontSize: fontSize.base,
+    color: colors.fasting,
+    fontWeight: fontWeight.bold,
+  },
+
+  mainHadithReference: {
+    fontSize: fontSize.sm,
+    color: colors.text.tertiary,
+    fontStyle: 'italic',
+  },
+
+  // Navigate to Rewards Section
+  rewardsSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderWidth: 2,
+    borderColor: colors.fasting,
+    ...shadows.small,
+  },
+
+  rewardsSectionTitle: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.bold,
+    color: colors.fasting,
+    flex: 1,
+  },
+
+  navigateIcon: {
+    fontSize: fontSize.xl,
+    color: colors.fasting,
+    fontWeight: fontWeight.bold,
   },
 
   // Fast Card

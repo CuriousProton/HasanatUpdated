@@ -51,6 +51,15 @@ export const colors = {
     blue: '#3b82f6',
     purple: '#8b5cf6',
   },
+  
+  // Prayer time colors (based on time of day)
+  prayers: {
+    fajr: '#fda4af',      // Soft pink/rose - dawn (early morning light)
+    dhuhr: '#fbbf24',    // Bright golden yellow - midday sun
+    asr: '#fb923c',       // Warm orange - afternoon sun
+    maghrib: '#f97316',   // Deep orange-red - dusk/sunset
+    isha: '#4c1d95',      // Deep indigo/purple - night sky
+  },
 };
 
 export const spacing = {

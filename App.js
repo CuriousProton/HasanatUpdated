@@ -9,10 +9,16 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { HomeScreen } from './screens/HomeScreen';
 import { SalahScreen } from './screens/SalahScreen';
 import { QuranScreen } from './screens/QuranScreen';
+import { QuranRewardsScreen } from './screens/QuranRewardsScreen';
 import { CharityScreen } from './screens/CharityScreen';
+import { CharityRewardsScreen } from './screens/CharityRewardsScreen';
 import { DhikrScreen } from './screens/DhikrScreen';
+import { DhikrRewardsScreen } from './screens/DhikrRewardsScreen';
+import { DhikrCounterScreen } from './screens/DhikrCounterScreen';
 import { FastingScreen } from './screens/FastingScreen';
+import { FastingRewardsScreen } from './screens/FastingRewardsScreen';
 import { KindnessScreen } from './screens/KindnessScreen';
+import { KindnessRewardsScreen } from './screens/KindnessRewardsScreen';
 import { HistoryScreen } from './screens/HistoryScreen';
 import { ReferencesScreen } from './screens/ReferencesScreen';
 
@@ -30,6 +36,7 @@ import { colors } from './styles/theme';
 export default function App() {
   const [currentView, setCurrentView] = useState('home');
   const [hasanat, setHasanat] = useState([]);
+  const [navigationData, setNavigationData] = useState(null);
 
   // Load data and setup notifications on mount
   useEffect(() => {
@@ -85,7 +92,8 @@ export default function App() {
   };
 
   // Navigate to different screens
-  const handleNavigate = (view) => {
+  const handleNavigate = (view, data = null) => {
+    setNavigationData(data);
     setCurrentView(view);
   };
 
@@ -104,19 +112,43 @@ export default function App() {
         return <SalahScreen onBack={handleBack} onRecord={addHasanah} />;
 
       case 'quran':
-        return <QuranScreen onBack={handleBack} onRecord={addHasanah} />;
+        return <QuranScreen onBack={handleBack} onRecord={addHasanah} onNavigate={handleNavigate} />;
+
+      case 'quran-rewards':
+        return <QuranRewardsScreen onBack={() => setCurrentView('quran')} />;
 
       case 'charity':
-        return <CharityScreen onBack={handleBack} onRecord={addHasanah} />;
+        return <CharityScreen onBack={handleBack} onRecord={addHasanah} onNavigate={handleNavigate} />;
+
+      case 'charity-rewards':
+        return <CharityRewardsScreen onBack={() => setCurrentView('charity')} />;
 
       case 'dhikr':
-        return <DhikrScreen onBack={handleBack} onRecord={addHasanah} />;
+        return <DhikrScreen onBack={handleBack} onRecord={addHasanah} onNavigate={handleNavigate} />;
+
+      case 'dhikr-rewards':
+        return <DhikrRewardsScreen onBack={() => setCurrentView('dhikr')} />;
+
+      case 'dhikr-counter':
+        return (
+          <DhikrCounterScreen
+            onBack={() => setCurrentView('dhikr')}
+            dhikr={navigationData?.dhikr}
+            onRecord={addHasanah}
+          />
+        );
 
       case 'fasting':
-        return <FastingScreen onBack={handleBack} onRecord={addHasanah} />;
+        return <FastingScreen onBack={handleBack} onRecord={addHasanah} onNavigate={handleNavigate} />;
+
+      case 'fasting-rewards':
+        return <FastingRewardsScreen onBack={() => setCurrentView('fasting')} />;
 
       case 'kindness':
-        return <KindnessScreen onBack={handleBack} onRecord={addHasanah} />;
+        return <KindnessScreen onBack={handleBack} onRecord={addHasanah} onNavigate={handleNavigate} />;
+
+      case 'kindness-rewards':
+        return <KindnessRewardsScreen onBack={() => setCurrentView('kindness')} />;
 
       case 'history':
         return (

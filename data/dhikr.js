@@ -20,7 +20,7 @@ export const dhikrOptions = [
     meaning: 'All praise is for Allah',
     recommended: 100,
     hadith: '"The best remembrance is: La ilaha illallah (There is no god but Allah), and the best supplication is: Alhamdulillah (All praise is for Allah)."',
-    hadithReference: 'Sunan Ibn Majah 3800',
+    hadithReference: 'Sunan Ibn Majah 3800 - Hasan',
     reward: 'Best supplication',
     motivation: 'Gratitude opens doors to blessings!'
   },
@@ -31,7 +31,7 @@ export const dhikrOptions = [
     meaning: 'Allah is the Greatest',
     recommended: 100,
     hadith: '"Allahu Akbar fills what is between the heavens and the earth."',
-    hadithReference: 'Sunan an-Nasa\'i 1350',
+    hadithReference: 'Sunan an-Nasa\'i 1350 - Sahih',
     reward: 'Fills heavens and earth',
     motivation: 'Magnify Allah and feel His greatness!'
   },
@@ -107,9 +107,9 @@ export const dhikrOptions = [
     transliteration: 'Rabbi ighfir li',
     meaning: 'O my Lord, forgive me',
     recommended: 100,
-    hadith: '"The most superior way of asking for forgiveness is to say: \'O Allah, You are my Lord, there is no god but You. You created me and I am Your servant...\'"',
-    hadithReference: 'Sahih al-Bukhari 6306',
-    reward: 'Complete forgiveness',
+    hadith: '"And your Lord said: \'Call upon Me; I will respond to you.\' Indeed, those who disdain My worship will enter Hell [rendered] contemptible."',
+    hadithReference: 'Quran 40:60',
+    reward: 'Allah\'s response and forgiveness',
     motivation: 'Seek forgiveness with sincerity!'
   },
   { 
@@ -118,8 +118,8 @@ export const dhikrOptions = [
     transliteration: 'Hasbunallahu wa ni\'mal wakeel',
     meaning: 'Allah is sufficient for us, and He is the best Disposer of affairs',
     recommended: 33,
-    hadith: '"Whoever says \'Hasbunallahu wa ni\'mal wakeel\' when afflicted with a calamity, Allah will suffice him."',
-    hadithReference: 'Sunan Ibn Majah 3806',
+    hadith: '"Whoever says \'Hasbunallahu wa ni\'mal wakeel\' (Allah is sufficient for us, and He is the best Disposer of affairs) when afflicted with a calamity, Allah will suffice him."',
+    hadithReference: 'Sunan Ibn Majah 3806 - Hasan',
     reward: 'Allah\'s sufficiency',
     motivation: 'Allah is sufficient for you!'
   },
@@ -129,7 +129,7 @@ export const dhikrOptions = [
     transliteration: 'SubhanAllahi wa bihamdihi, \'adada khalqihi',
     meaning: 'Glory and praise be to Allah, as many as His creation',
     recommended: 100,
-    hadith: '"Whoever says this in the morning and evening will have said the best that anyone can say."',
+    hadith: '"Whoever says: \'SubhanAllahi wa bihamdihi, \'adada khalqihi, wa ridha nafsihi, wa zinata \'arshihi, wa midada kalimatihi\' (Glory and praise be to Allah, as many as His creation, as much as pleases Him, as heavy as His Throne, and as much as the ink of His words) in the morning and evening, will have said the best that anyone can say."',
     hadithReference: 'Sahih Muslim 2726',
     reward: 'Best remembrance',
     motivation: 'The best words you can say!'

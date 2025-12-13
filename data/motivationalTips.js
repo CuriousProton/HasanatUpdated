@@ -55,7 +55,7 @@ export const motivationalTips = [
   {
     tip: "Recite the morning and evening adhkar",
     benefit: "Protection from harm and blessings throughout the day",
-    reference: "Sunan Abu Dawud 5082"
+    reference: "Sahih al-Bukhari 6307, Sahih Muslim 2704"
   },
   {
     tip: "Read at least one page of Quran",

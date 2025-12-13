@@ -54,7 +54,7 @@ export const categories = [
     color: '#0891b2',
     lightColor: '#f0fdfa',
     hadith: 'The merciful will be shown mercy by the Most Merciful.',
-    reference: 'Sunan Abu Dawud 4941'
+    reference: 'Sahih al-Bukhari 5999, Sahih Muslim 2319'
   }
 ];
 

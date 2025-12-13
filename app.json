@@ -1,13 +1,18 @@
 {
   "expo": {
-    "name": "Hasanat Tracker",
-    "slug": "hasanat-tracker",
+    "name": "HasanatUpdated",
+    "slug": "hasanatupdated",
     "version": "1.0.0",
+    "platforms": [
+      "android",
+      "ios"
+    ],
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#4A90E2"
+      "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -34,6 +39,12 @@
     },
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "16d47aa3-c85a-472b-920a-dfc9a51f8916"
+      }
+    },
+    "owner": "sadique147"
   }
 }

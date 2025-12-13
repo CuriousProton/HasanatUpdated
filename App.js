@@ -2,7 +2,7 @@
 // Main application entry point
 
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Text } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 // Screens
@@ -150,3 +150,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
   },
 });
+

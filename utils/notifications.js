@@ -8,7 +8,9 @@ import { getRandomTip, getEncouragingMessage } from '../data/motivationalTips';
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    // Use new flags to avoid deprecation warnings
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
@@ -88,6 +90,7 @@ export const scheduleDailyNotification = async (hasanat) => {
       hour: 21, // 9 PM
       minute: 0,
       repeats: true,
+      channelId: 'daily-reminder', // required on Android 13+ for scheduled notifications
     };
 
     await Notifications.scheduleNotificationAsync({
@@ -124,6 +127,7 @@ export const sendTestNotification = async (hasanat) => {
       },
       trigger: {
         seconds: 2,
+        channelId: 'daily-reminder',
       },
     });
 

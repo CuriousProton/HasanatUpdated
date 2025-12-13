@@ -36,8 +36,8 @@ A beautiful and intuitive mobile application for Muslims to track their good dee
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/CuriousProton/HasanatUpdated.git
-   cd HasanatUpdated
+   git clone <repository-url>
+   cd hasanat-tracker
    ```
 
 2. **Install dependencies**
@@ -108,7 +108,7 @@ eas build -p ios --profile preview
 ## 🏗️ Project Structure
 
 ```
-HasanatUpdated/
+hasanat-tracker/
 ├── assets/              # App icons and splash screens
 ├── components/          # Reusable UI components
 │   ├── CategoryCard.js

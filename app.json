@@ -3,6 +3,11 @@
     "name": "Hasanat Tracker",
     "slug": "hasanat-tracker",
     "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "7087e7c0-bdd1-4875-8eae-f78bf267d26e"
+      }
+    },
     "platforms": [
       "android",
       "ios"

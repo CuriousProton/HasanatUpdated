@@ -40,3 +40,14 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa
+
+# EAS
+.eas/
+
+# Temporary folders
+nre_folder/

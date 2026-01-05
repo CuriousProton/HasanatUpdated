@@ -1,5 +1,49 @@
 {
-  "plugins": [
-    "expo-asset"
-  ]
+  "expo": {
+    "name": "Hasanat Tracker",
+    "slug": "hasanat-tracker",
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "7087e7c0-bdd1-4875-8eae-f78bf267d26e"
+      }
+    },
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "enabled": false
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hasanattracker.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#4A90E2"
+      },
+      "package": "com.hasanattracker.app",
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM"
+      ]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
 }

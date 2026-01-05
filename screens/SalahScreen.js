@@ -6,13 +6,21 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { Header } from '../components/Header';
 import { BigHadithCard } from '../components/HadithCard';
 import { prayers } from '../data/prayers';
-import { calculateSalahReward } from '../utils/calculations';
+import { calculateSalahReward, calculateSalahRewardValue } from '../utils/calculations';
 import { colors, spacing, fontSize, fontWeight, borderRadius } from '../styles/theme';
 import { commonStyles } from '../styles/commonStyles';
 
 export const SalahScreen = ({ onBack, onRecord }) => {
   const [selectedPrayer, setSelectedPrayer] = useState(null);
   const [atMosque, setAtMosque] = useState(false);
+
+  // Helper function to add opacity to hex color
+  const addOpacity = (hex, opacity) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
 
   const handleRecord = () => {
     if (!selectedPrayer) {
@@ -26,6 +34,7 @@ export const SalahScreen = ({ onBack, onRecord }) => {
     onRecord({
       type: 'salah',
       details: `${selectedPrayer.name} ${location}`,
+      rewordValue: calculateSalahRewardValue(selectedPrayer, atMosque),
       estimatedReward: reward,
     });
 
@@ -45,36 +54,96 @@ export const SalahScreen = ({ onBack, onRecord }) => {
       <Header title="🕌 Salah" showBack onBack={onBack} />
 
       <ScrollView contentContainerStyle={commonStyles.scrollContent}>
-        {/* Hadith Card */}
+        {/* General Hadith about Salah */}
         <BigHadithCard
           prayer={{
-            hadith: '"Prayer in congregation is twenty-seven times superior to prayer offered alone."',
-            reference: 'Sahih al-Bukhari 645',
+            hadith: '"The first matter that the slave will be brought to account for on the Day of Judgment is the prayer. If it is sound, then the rest of his deeds will be sound. And if it is bad, then the rest of his deeds will be bad."',
+            reference: 'Sunan an-Nasa\'i 465',
           }}
         />
 
+        {/* Selected Prayer's Specific Hadith */}
+        {selectedPrayer && (() => {
+          const prayerColor = (() => {
+            const colorMap = {
+              'Fajr': colors.prayers.fajr,
+              'Dhuhr': colors.prayers.dhuhr,
+              'Asr': colors.prayers.asr,
+              'Maghrib': colors.prayers.maghrib,
+              'Isha': colors.prayers.isha,
+            };
+            return colorMap[selectedPrayer.name] || colors.salah;
+          })();
+          
+          return (
+            <View style={[styles.prayerHadithCard, { borderLeftColor: prayerColor }]}>
+              <Text style={[styles.prayerHadithTitle, { color: prayerColor }]}>
+                💡 About {selectedPrayer.name} Prayer
+              </Text>
+              <Text style={styles.prayerHadithText}>
+                {selectedPrayer.hadith}
+              </Text>
+              <Text style={styles.prayerHadithReference}>
+                — {selectedPrayer.reference}
+              </Text>
+              <View style={[styles.importanceBox, { backgroundColor: addOpacity(prayerColor, 0.1) }]}>
+                <Text style={[styles.importanceText, { color: prayerColor }]}>
+                  ⭐ {selectedPrayer.importance}
+                </Text>
+              </View>
+            </View>
+          );
+        })()}
+
         {/* Prayer Selection */}
         <Text style={commonStyles.label}>Select Prayer</Text>
-        {prayers.map((prayer) => (
-          <TouchableOpacity
-            key={prayer.name}
-            style={[
-              styles.prayerCard,
-              selectedPrayer?.name === prayer.name && styles.prayerCardSelected,
-            ]}
-            onPress={() => setSelectedPrayer(prayer)}
-          >
-            <Text style={styles.prayerIcon}>{prayer.icon}</Text>
-            <View style={styles.prayerInfo}>
-              <Text style={styles.prayerName}>{prayer.name}</Text>
-              <Text style={styles.prayerTime}>{prayer.time}</Text>
-              <Text style={styles.prayerReward}>🎁 {prayer.reward}</Text>
-            </View>
-            {selectedPrayer?.name === prayer.name && (
-              <Text style={styles.checkmark}>✓</Text>
-            )}
-          </TouchableOpacity>
-        ))}
+        {prayers.map((prayer) => {
+          // Get prayer-specific color based on name
+          const getPrayerColor = (prayerName) => {
+            const colorMap = {
+              'Fajr': colors.prayers.fajr,
+              'Dhuhr': colors.prayers.dhuhr,
+              'Asr': colors.prayers.asr,
+              'Maghrib': colors.prayers.maghrib,
+              'Isha': colors.prayers.isha,
+            };
+            return colorMap[prayerName] || colors.salah;
+          };
+          
+          const prayerColor = getPrayerColor(prayer.name);
+          
+          return (
+            <TouchableOpacity
+              key={prayer.name}
+              style={[
+                styles.prayerCard,
+                { borderColor: prayerColor },
+                selectedPrayer?.name === prayer.name && [
+                  styles.prayerCardSelected,
+                  { 
+                    borderColor: prayerColor,
+                    backgroundColor: addOpacity(prayerColor, 0.1), // 10% opacity
+                  }
+                ],
+              ]}
+              onPress={() => setSelectedPrayer(prayer)}
+            >
+              <Text style={styles.prayerIcon}>{prayer.icon}</Text>
+              <View style={styles.prayerInfo}>
+                <Text style={[styles.prayerName, { color: prayerColor }]}>
+                  {prayer.name}
+                </Text>
+                <Text style={styles.prayerTime}>{prayer.time}</Text>
+                <Text style={[styles.prayerReward, { color: prayerColor }]}>
+                  🎁 {prayer.reward}
+                </Text>
+              </View>
+              {selectedPrayer?.name === prayer.name && (
+                <Text style={[styles.checkmark, { color: prayerColor }]}>✓</Text>
+              )}
+            </TouchableOpacity>
+          );
+        })}
 
         {/* Mosque Toggle */}
         {selectedPrayer && (
@@ -120,17 +189,34 @@ export const SalahScreen = ({ onBack, onRecord }) => {
             </View>
 
             {/* Reward Display */}
-            <View style={styles.rewardBox}>
-              <Text style={styles.rewardLabel}>Estimated Reward:</Text>
-              <Text style={styles.rewardValue}>
-                {calculateSalahReward(selectedPrayer, atMosque)}
-              </Text>
-              {atMosque && (
-                <Text style={styles.rewardBonus}>
-                  ✨ 27x multiplier for congregation!
-                </Text>
-              )}
-            </View>
+            {(() => {
+              const prayerColor = (() => {
+                const colorMap = {
+                  'Fajr': colors.prayers.fajr,
+                  'Dhuhr': colors.prayers.dhuhr,
+                  'Asr': colors.prayers.asr,
+                  'Maghrib': colors.prayers.maghrib,
+                  'Isha': colors.prayers.isha,
+                };
+                return colorMap[selectedPrayer.name] || colors.salah;
+              })();
+              
+              return (
+                <View style={[styles.rewardBox, { backgroundColor: addOpacity(prayerColor, 0.15) }]}>
+                  <Text style={[styles.rewardLabel, { color: prayerColor }]}>
+                    Estimated Reward:
+                  </Text>
+                  <Text style={[styles.rewardValue, { color: prayerColor }]}>
+                    {calculateSalahReward(selectedPrayer, atMosque)}
+                  </Text>
+                  {atMosque && (
+                    <Text style={[styles.rewardBonus, { color: prayerColor }]}>
+                      ✨ 27x multiplier for congregation!
+                    </Text>
+                  )}
+                </View>
+              );
+            })()}
           </View>
         )}
 
@@ -169,12 +255,10 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginBottom: spacing.md,
     borderWidth: 2,
-    borderColor: colors.border.light,
   },
 
   prayerCardSelected: {
-    borderColor: colors.salah,
-    backgroundColor: '#eff6ff',
+    // Dynamic colors applied inline
   },
 
   prayerIcon: {
@@ -189,8 +273,8 @@ const styles = StyleSheet.create({
   prayerName: {
     fontSize: fontSize.lg,
     fontWeight: fontWeight.bold,
-    color: colors.text.primary,
     marginBottom: spacing.xs / 2,
+    // Dynamic color applied inline
   },
 
   prayerTime: {
@@ -201,14 +285,14 @@ const styles = StyleSheet.create({
 
   prayerReward: {
     fontSize: fontSize.sm,
-    color: colors.salah,
     fontWeight: fontWeight.semibold,
+    // Dynamic color applied inline
   },
 
   checkmark: {
     fontSize: 24,
-    color: colors.salah,
     fontWeight: fontWeight.bold,
+    // Dynamic color applied inline
   },
 
   mosqueSection: {
@@ -252,30 +336,30 @@ const styles = StyleSheet.create({
   },
 
   rewardBox: {
-    backgroundColor: '#d1fae5',
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     alignItems: 'center',
+    // Dynamic background color applied inline
   },
 
   rewardLabel: {
     fontSize: fontSize.sm,
-    color: '#065f46',
     marginBottom: spacing.xs,
+    // Dynamic color applied inline
   },
 
   rewardValue: {
     fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
-    color: '#065f46',
     textAlign: 'center',
+    // Dynamic color applied inline
   },
 
   rewardBonus: {
     fontSize: fontSize.sm,
-    color: '#059669',
     marginTop: spacing.sm,
     textAlign: 'center',
+    // Dynamic color applied inline
   },
 
   reminder: {
@@ -297,5 +381,49 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.text.secondary,
     lineHeight: 20,
+  },
+
+  prayerHadithCard: {
+    backgroundColor: '#eff6ff',
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    borderLeftWidth: 4,
+    // Dynamic border color applied inline
+  },
+
+  prayerHadithTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    marginBottom: spacing.md,
+    // Dynamic color applied inline
+  },
+
+  prayerHadithText: {
+    fontSize: fontSize.md,
+    color: colors.text.primary,
+    lineHeight: 22,
+    fontStyle: 'italic',
+    marginBottom: spacing.sm,
+  },
+
+  prayerHadithReference: {
+    fontSize: fontSize.sm,
+    color: colors.text.secondary,
+    textAlign: 'right',
+    marginBottom: spacing.md,
+  },
+
+  importanceBox: {
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    alignItems: 'center',
+    // Dynamic background color applied inline
+  },
+
+  importanceText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    // Dynamic color applied inline
   },
 });

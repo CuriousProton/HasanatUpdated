@@ -4,14 +4,13 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 import { Header } from '../components/Header';
-import { SmallHadithCard } from '../components/HadithCard';
 import { surahs } from '../data/surahs';
-import { quranHadithCards } from '../data/hadiths';
-import { calculateQuranReward } from '../utils/calculations';
-import { colors, spacing, fontSize, fontWeight, borderRadius } from '../styles/theme';
+import { quranHadiths } from '../data/hadiths';
+import { calculateQuranReward, calculateQuranRewardValue } from '../utils/calculations';
+import { colors, spacing, fontSize, fontWeight, borderRadius, shadows } from '../styles/theme';
 import { commonStyles } from '../styles/commonStyles';
 
-export const QuranScreen = ({ onBack, onRecord }) => {
+export const QuranScreen = ({ onBack, onRecord, onNavigate }) => {
   const [selectedSurah, setSelectedSurah] = useState(null);
   const [fromAyah, setFromAyah] = useState('');
   const [toAyah, setToAyah] = useState('');
@@ -31,6 +30,7 @@ export const QuranScreen = ({ onBack, onRecord }) => {
     onRecord({
       type: 'quran',
       details: `${selectedSurah.name}${ayahRange}`,
+      rewordValue: calculateQuranRewardValue(selectedSurah, fromAyah, toAyah),
       estimatedReward: reward,
     });
 
@@ -59,12 +59,34 @@ export const QuranScreen = ({ onBack, onRecord }) => {
       <Header title="📖 Quran Reading" showBack onBack={onBack} />
 
       <ScrollView contentContainerStyle={commonStyles.scrollContent}>
-        {/* Hadith Cards */}
+        {/* Main Hadith - Always visible when showing surah list */}
         {showSurahList && (
-          <View style={styles.hadithSection}>
-            {quranHadithCards.map((hadith, index) => (
-              <SmallHadithCard key={index} hadith={hadith} index={index} />
-            ))}
+          <View style={styles.mainHadithSection}>
+            {/* Main Hadith Card - About rewards of reading Quran */}
+            <View style={styles.mainHadithCard}>
+              <Text style={styles.mainHadithTitle}>📖 Reward of Reading Quran</Text>
+              <Text style={styles.mainHadithText}>
+                "{quranHadiths[0].hadith}"
+              </Text>
+              <View style={styles.mainHadithFooter}>
+                <Text style={styles.mainHadithReward}>🎁 {quranHadiths[0].reward}</Text>
+                <Text style={styles.mainHadithReference}>— {quranHadiths[0].reference}</Text>
+              </View>
+            </View>
+
+            {/* Navigate to Rewards Screen */}
+            {onNavigate && (
+              <TouchableOpacity
+                style={styles.rewardsSectionHeader}
+                onPress={() => onNavigate('quran-rewards')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.rewardsSectionTitle}>
+                  📚 More Rewards of Reading Quran
+                </Text>
+                <Text style={styles.navigateIcon}>→</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
@@ -135,6 +157,47 @@ export const QuranScreen = ({ onBack, onRecord }) => {
               </View>
             </View>
 
+            {/* Surah-Specific Hadiths */}
+            {selectedSurah.specialHadith && (
+              <View style={styles.surahHadithCard}>
+                <Text style={styles.surahHadithTitle}>✨ Special Reward for {selectedSurah.name}</Text>
+                <Text style={styles.surahHadithText}>{selectedSurah.specialHadith}</Text>
+                {(() => {
+                  // Get specific hadith details for known surahs
+                  const surahSpecificHadiths = {
+                    'Al-Ikhlas': {
+                      hadith: '"Say: He is Allah, the One (Surah Al-Ikhlas) is equivalent to one-third of the Quran."',
+                      reference: 'Sahih al-Bukhari 5013',
+                    },
+                    'Al-Baqarah': {
+                      hadith: '"The last two verses of Surah Al-Baqarah - whoever recites them at night, they will be sufficient for him."',
+                      reference: 'Sahih al-Bukhari 5009',
+                    },
+                    'Al-Kahf': {
+                      hadith: '"Whoever memorizes the first ten verses of Surah Al-Kahf will be protected from the Dajjal."',
+                      reference: 'Sahih Muslim 809',
+                    },
+                    'Al-Mulk': {
+                      hadith: '"Surah Al-Mulk will intercede for its companion until he is forgiven."',
+                      reference: 'Sunan al-Tirmidhi 2891',
+                    },
+                  };
+                  
+                  const specificHadith = surahSpecificHadiths[selectedSurah.name];
+                  
+                  if (specificHadith) {
+                    return (
+                      <>
+                        <Text style={styles.surahHadithFullText}>"{specificHadith.hadith}"</Text>
+                        <Text style={styles.surahHadithReference}>— {specificHadith.reference}</Text>
+                      </>
+                    );
+                  }
+                  return null;
+                })()}
+              </View>
+            )}
+
             {/* Ayah Range (Optional) */}
             <Text style={commonStyles.label}>Did you read specific ayahs? (Optional)</Text>
             <Text style={styles.helpText}>
@@ -204,8 +267,164 @@ export const QuranScreen = ({ onBack, onRecord }) => {
 };
 
 const styles = StyleSheet.create({
-  hadithSection: {
-    marginBottom: spacing.lg,
+  // Main Hadith Section
+  mainHadithSection: {
+    marginBottom: spacing.xl,
+  },
+
+  // Main Hadith Card
+  mainHadithCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.quran,
+    ...shadows.medium,
+  },
+
+  mainHadithTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.quran,
+    marginBottom: spacing.md,
+  },
+
+  mainHadithText: {
+    fontSize: fontSize.base,
+    color: colors.text.primary,
+    lineHeight: 22,
+    fontStyle: 'italic',
+    marginBottom: spacing.md,
+  },
+
+  mainHadithFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+
+  mainHadithReward: {
+    fontSize: fontSize.base,
+    color: colors.quran,
+    fontWeight: fontWeight.bold,
+  },
+
+  mainHadithReference: {
+    fontSize: fontSize.sm,
+    color: colors.text.tertiary,
+    fontStyle: 'italic',
+  },
+
+  // Navigate to Rewards Section
+  rewardsSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderWidth: 2,
+    borderColor: colors.quran,
+    ...shadows.small,
+  },
+
+  rewardsSectionTitle: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.bold,
+    color: colors.quran,
+    flex: 1,
+  },
+
+  navigateIcon: {
+    fontSize: fontSize.xl,
+    color: colors.quran,
+    fontWeight: fontWeight.bold,
+  },
+
+  hadithCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.quran,
+    ...shadows.medium,
+  },
+
+  hadithTitle: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.bold,
+    color: colors.quran,
+    marginBottom: spacing.sm,
+  },
+
+  hadithText: {
+    fontSize: fontSize.sm,
+    color: colors.text.primary,
+    lineHeight: 20,
+    fontStyle: 'italic',
+    marginBottom: spacing.md,
+  },
+
+  hadithFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+
+  hadithReward: {
+    fontSize: fontSize.sm,
+    color: colors.quran,
+    fontWeight: fontWeight.semibold,
+  },
+
+  hadithReference: {
+    fontSize: fontSize.xs,
+    color: colors.text.tertiary,
+    fontStyle: 'italic',
+  },
+
+  // Surah-Specific Hadith Card
+  surahHadithCard: {
+    backgroundColor: '#ecfdf5',
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.quran,
+  },
+
+  surahHadithTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.quran,
+    marginBottom: spacing.md,
+  },
+
+  surahHadithText: {
+    fontSize: fontSize.base,
+    color: colors.text.primary,
+    fontWeight: fontWeight.semibold,
+    marginBottom: spacing.sm,
+  },
+
+  surahHadithFullText: {
+    fontSize: fontSize.sm,
+    color: colors.text.primary,
+    lineHeight: 20,
+    fontStyle: 'italic',
+    marginBottom: spacing.sm,
+  },
+
+  surahHadithReference: {
+    fontSize: fontSize.xs,
+    color: colors.text.secondary,
+    textAlign: 'right',
+    fontStyle: 'italic',
   },
 
   // Surah List Styles

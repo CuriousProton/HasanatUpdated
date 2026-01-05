@@ -4,58 +4,16 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Header } from '../components/Header';
-import { SmallHadithCard } from '../components/HadithCard';
 import { dhikrOptions } from '../data/dhikr';
-import { dhikrHadithCards } from '../data/hadiths';
-import { calculateDhikrReward } from '../utils/calculations';
-import { colors, spacing, fontSize, fontWeight, borderRadius } from '../styles/theme';
+import { dhikrHadiths } from '../data/hadiths';
+import { colors, spacing, fontSize, fontWeight, borderRadius, shadows } from '../styles/theme';
 import { commonStyles } from '../styles/commonStyles';
 
-export const DhikrScreen = ({ onBack, onRecord }) => {
-  const [selectedDhikr, setSelectedDhikr] = useState(null);
-  const [count, setCount] = useState(0);
-
-  const handleIncrement = () => {
-    setCount(count + 1);
-    
-    // Haptic feedback milestone celebrations
-    if (count + 1 === 33 || count + 1 === 100) {
-      // Show milestone celebration
-      Alert.alert('🎉 Milestone!', `MashaAllah! You reached ${count + 1}!`, [{ text: 'Continue' }]);
+export const DhikrScreen = ({ onBack, onRecord, onNavigate }) => {
+  const handleDhikrSelect = (dhikr) => {
+    if (onNavigate) {
+      onNavigate('dhikr-counter', { dhikr });
     }
-  };
-
-  const handleReset = () => {
-    setCount(0);
-  };
-
-  const handleRecord = () => {
-    if (!selectedDhikr) {
-      Alert.alert('Select Dhikr', 'Please select which dhikr you recited');
-      return;
-    }
-
-    if (count === 0) {
-      Alert.alert('Add Count', 'Please add at least one count');
-      return;
-    }
-
-    const specialReward = calculateDhikrReward(selectedDhikr, count);
-
-    onRecord({
-      type: 'dhikr',
-      details: `${selectedDhikr.transliteration} (${count}x)`,
-      estimatedReward: specialReward || `${count} times`,
-    });
-
-    Alert.alert(
-      '✨ Dhikr Recorded!',
-      `${selectedDhikr.transliteration} - ${count} times\n\n${specialReward || 'May Allah accept it!'}`,
-      [{ text: 'Alhamdulillah!' }]
-    );
-
-    // Reset
-    setCount(0);
   };
 
   return (
@@ -63,11 +21,33 @@ export const DhikrScreen = ({ onBack, onRecord }) => {
       <Header title="✨ Dhikr" showBack onBack={onBack} />
 
       <ScrollView contentContainerStyle={commonStyles.scrollContent}>
-        {/* Hadith Cards */}
-        <View style={styles.hadithSection}>
-          {dhikrHadithCards.map((hadith, index) => (
-            <SmallHadithCard key={index} hadith={hadith} index={index} />
-          ))}
+        {/* Main Hadith - Always visible */}
+        <View style={styles.mainHadithSection}>
+          {/* Main Hadith Card - About rewards of dhikr */}
+          <View style={styles.mainHadithCard}>
+            <Text style={styles.mainHadithTitle}>✨ Reward of Dhikr</Text>
+            <Text style={styles.mainHadithText}>
+              "{dhikrHadiths[0].hadith}"
+            </Text>
+            <View style={styles.mainHadithFooter}>
+              <Text style={styles.mainHadithReward}>🎁 {dhikrHadiths[0].reward}</Text>
+              <Text style={styles.mainHadithReference}>— {dhikrHadiths[0].reference}</Text>
+            </View>
+          </View>
+
+          {/* Navigate to Rewards Screen */}
+          {onNavigate && (
+            <TouchableOpacity
+              style={styles.rewardsSectionHeader}
+              onPress={() => onNavigate('dhikr-rewards')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.rewardsSectionTitle}>
+                📚 More Rewards of Dhikr
+              </Text>
+              <Text style={styles.navigateIcon}>→</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Dhikr Selection */}
@@ -75,11 +55,9 @@ export const DhikrScreen = ({ onBack, onRecord }) => {
         {dhikrOptions.map((dhikr) => (
           <TouchableOpacity
             key={dhikr.id}
-            style={[
-              styles.dhikrCard,
-              selectedDhikr?.id === dhikr.id && styles.dhikrCardSelected,
-            ]}
-            onPress={() => setSelectedDhikr(dhikr)}
+            style={styles.dhikrCard}
+            onPress={() => handleDhikrSelect(dhikr)}
+            activeOpacity={0.7}
           >
             <View style={styles.dhikrInfo}>
               <Text style={styles.dhikrArabic}>{dhikr.arabic}</Text>
@@ -89,109 +67,15 @@ export const DhikrScreen = ({ onBack, onRecord }) => {
                 💡 Recommended: {dhikr.recommended}x
               </Text>
             </View>
-            {selectedDhikr?.id === dhikr.id && (
-              <Text style={styles.checkmark}>✓</Text>
-            )}
+            <Text style={styles.navigateIcon}>→</Text>
           </TouchableOpacity>
         ))}
-
-        {/* Counter Section */}
-        {selectedDhikr && (
-          <View style={styles.counterSection}>
-            {/* Selected Dhikr Display */}
-            <View style={styles.selectedDhikrBox}>
-              <Text style={styles.selectedArabic}>{selectedDhikr.arabic}</Text>
-              <Text style={styles.selectedTransliteration}>{selectedDhikr.transliteration}</Text>
-            </View>
-
-            {/* Counter Display */}
-            <View style={styles.counterDisplay}>
-              <Text style={styles.counterLabel}>Count</Text>
-              <Text style={styles.counterNumber}>{count}</Text>
-              <View style={styles.progressBar}>
-                <View 
-                  style={[
-                    styles.progressFill, 
-                    { width: `${Math.min((count / selectedDhikr.recommended) * 100, 100)}%` }
-                  ]} 
-                />
-              </View>
-              <Text style={styles.progressText}>
-                {count} / {selectedDhikr.recommended} recommended
-              </Text>
-            </View>
-
-            {/* Counter Buttons */}
-            <View style={styles.counterButtons}>
-              <TouchableOpacity
-                style={styles.resetButton}
-                onPress={handleReset}
-              >
-                <Text style={styles.resetButtonText}>Reset</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.incrementButton}
-                onPress={handleIncrement}
-              >
-                <Text style={styles.incrementButtonText}>+1</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Quick Add Buttons */}
-            <View style={styles.quickAddButtons}>
-              <TouchableOpacity
-                style={styles.quickAddButton}
-                onPress={() => setCount(count + 10)}
-              >
-                <Text style={styles.quickAddText}>+10</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.quickAddButton}
-                onPress={() => setCount(count + 33)}
-              >
-                <Text style={styles.quickAddText}>+33</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.quickAddButton}
-                onPress={() => setCount(selectedDhikr.recommended)}
-              >
-                <Text style={styles.quickAddText}>+{selectedDhikr.recommended}</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Special Reward Display */}
-            {calculateDhikrReward(selectedDhikr, count) && (
-              <View style={styles.specialRewardBox}>
-                <Text style={styles.specialRewardIcon}>🎁</Text>
-                <Text style={styles.specialRewardTitle}>Special Reward Unlocked!</Text>
-                <Text style={styles.specialRewardText}>
-                  {calculateDhikrReward(selectedDhikr, count)}
-                </Text>
-              </View>
-            )}
-
-            {/* Record Button */}
-            <TouchableOpacity
-              style={[
-                commonStyles.button,
-                count === 0 && commonStyles.buttonDisabled,
-              ]}
-              onPress={handleRecord}
-              disabled={count === 0}
-            >
-              <Text style={commonStyles.buttonText}>
-                ✅ Record Dhikr ({count})
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
 
         {/* Reminder */}
         <View style={styles.reminder}>
           <Text style={styles.reminderIcon}>💡</Text>
           <Text style={styles.reminderText}>
-            Tap the big +1 button each time you recite, or use quick add buttons!
+            Select a dhikr to start counting with vibration feedback!
           </Text>
         </View>
       </ScrollView>
@@ -200,8 +84,81 @@ export const DhikrScreen = ({ onBack, onRecord }) => {
 };
 
 const styles = StyleSheet.create({
-  hadithSection: {
-    marginBottom: spacing.lg,
+  // Main Hadith Section
+  mainHadithSection: {
+    marginBottom: spacing.xl,
+  },
+
+  // Main Hadith Card
+  mainHadithCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.dhikr,
+    ...shadows.medium,
+  },
+
+  mainHadithTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.dhikr,
+    marginBottom: spacing.md,
+  },
+
+  mainHadithText: {
+    fontSize: fontSize.base,
+    color: colors.text.primary,
+    lineHeight: 22,
+    fontStyle: 'italic',
+    marginBottom: spacing.md,
+  },
+
+  mainHadithFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+
+  mainHadithReward: {
+    fontSize: fontSize.base,
+    color: colors.dhikr,
+    fontWeight: fontWeight.bold,
+  },
+
+  mainHadithReference: {
+    fontSize: fontSize.sm,
+    color: colors.text.tertiary,
+    fontStyle: 'italic',
+  },
+
+  // Navigate to Rewards Section
+  rewardsSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderWidth: 2,
+    borderColor: colors.dhikr,
+    ...shadows.small,
+  },
+
+  rewardsSectionTitle: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.bold,
+    color: colors.dhikr,
+    flex: 1,
+  },
+
+  navigateIcon: {
+    fontSize: fontSize.xl,
+    color: colors.dhikr,
+    fontWeight: fontWeight.bold,
   },
 
   // Dhikr Selection
@@ -214,11 +171,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     borderWidth: 2,
     borderColor: colors.border.light,
-  },
-
-  dhikrCardSelected: {
-    borderColor: colors.dhikr,
-    backgroundColor: '#fdf2f8',
+    ...shadows.small,
   },
 
   dhikrInfo: {
@@ -250,165 +203,6 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
   },
 
-  checkmark: {
-    fontSize: 24,
-    color: colors.dhikr,
-    fontWeight: fontWeight.bold,
-  },
-
-  // Counter Section
-  counterSection: {
-    marginTop: spacing.xl,
-  },
-
-  selectedDhikrBox: {
-    backgroundColor: colors.background.primary,
-    borderRadius: borderRadius.lg,
-    padding: spacing.lg,
-    marginBottom: spacing.xl,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.dhikr,
-  },
-
-  selectedArabic: {
-    fontSize: fontSize.xxxl,
-    color: colors.text.primary,
-    marginBottom: spacing.sm,
-  },
-
-  selectedTransliteration: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
-    color: colors.dhikr,
-  },
-
-  // Counter Display
-  counterDisplay: {
-    backgroundColor: colors.background.primary,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xxl,
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-
-  counterLabel: {
-    fontSize: fontSize.md,
-    color: colors.text.secondary,
-    marginBottom: spacing.sm,
-  },
-
-  counterNumber: {
-    fontSize: fontSize.massive,
-    fontWeight: fontWeight.bold,
-    color: colors.dhikr,
-    marginBottom: spacing.lg,
-  },
-
-  progressBar: {
-    width: '100%',
-    height: 8,
-    backgroundColor: colors.background.tertiary,
-    borderRadius: borderRadius.full,
-    marginBottom: spacing.sm,
-    overflow: 'hidden',
-  },
-
-  progressFill: {
-    height: '100%',
-    backgroundColor: colors.dhikr,
-    borderRadius: borderRadius.full,
-  },
-
-  progressText: {
-    fontSize: fontSize.sm,
-    color: colors.text.tertiary,
-  },
-
-  // Counter Buttons
-  counterButtons: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginBottom: spacing.md,
-  },
-
-  resetButton: {
-    flex: 1,
-    backgroundColor: colors.background.tertiary,
-    borderRadius: borderRadius.lg,
-    padding: spacing.xl,
-    alignItems: 'center',
-  },
-
-  resetButtonText: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.bold,
-    color: colors.text.secondary,
-  },
-
-  incrementButton: {
-    flex: 2,
-    backgroundColor: colors.dhikr,
-    borderRadius: borderRadius.lg,
-    padding: spacing.xl,
-    alignItems: 'center',
-  },
-
-  incrementButtonText: {
-    fontSize: fontSize.xxxl,
-    fontWeight: fontWeight.bold,
-    color: colors.text.white,
-  },
-
-  // Quick Add Buttons
-  quickAddButtons: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginBottom: spacing.xl,
-  },
-
-  quickAddButton: {
-    flex: 1,
-    backgroundColor: colors.background.primary,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.dhikr,
-  },
-
-  quickAddText: {
-    fontSize: fontSize.base,
-    fontWeight: fontWeight.semibold,
-    color: colors.dhikr,
-  },
-
-  // Special Reward
-  specialRewardBox: {
-    backgroundColor: '#fef3c7',
-    borderRadius: borderRadius.lg,
-    padding: spacing.xl,
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-  },
-
-  specialRewardIcon: {
-    fontSize: 40,
-    marginBottom: spacing.sm,
-  },
-
-  specialRewardTitle: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.bold,
-    color: '#78350f',
-    marginBottom: spacing.sm,
-  },
-
-  specialRewardText: {
-    fontSize: fontSize.base,
-    color: '#92400e',
-    textAlign: 'center',
-  },
 
   // Reminder
   reminder: {

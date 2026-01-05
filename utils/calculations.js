@@ -28,6 +28,26 @@ export const calculateQuranReward = (surah, fromAyah, toAyah) => {
   return `~${estimatedHasanat.toLocaleString()} hasanat minimum (10 per letter)`;
 };
 
+export const calculateQuranRewardValue = (surah, fromAyah, toAyah) => {
+  if (!surah) return null;
+  
+  // If reading full surah
+  if (!fromAyah && !toAyah) {
+    const estimatedHasanat = surah.letters * 10;
+    return estimatedHasanat;
+  }
+  
+  // If reading specific ayahs
+  const from = parseInt(fromAyah) || 1;
+  const to = parseInt(toAyah) || surah.ayahs;
+  const ayahCount = to - from + 1;
+  const avgLettersPerAyah = Math.floor(surah.letters / surah.ayahs);
+  const estimatedLetters = ayahCount * avgLettersPerAyah;
+  const estimatedHasanat = estimatedLetters * 10;
+  
+  return estimatedHasanat;
+};
+
 /**
  * Calculate Salah reward with mosque multiplier
  * @param {Object} prayer - Prayer object
@@ -41,6 +61,15 @@ export const calculateSalahReward = (prayer, atMosque) => {
     return `27x reward (${prayer.quantified} × 27 for congregation)`;
   }
   return prayer.quantified;
+};
+
+
+export const calculateSalahRewardValue = (prayer, atMosque) => {
+  if (!prayer) return 0;
+
+  const baseReward = Number(prayer.quantified) || 1;
+
+  return atMosque ? baseReward * 27 : baseReward;
 };
 
 /**
@@ -68,6 +97,31 @@ export const calculateDhikrReward = (dhikr, count) => {
   }
   
   return null;
+};
+
+
+
+export const calculateDhikrRewardValue = (dhikr, count) => {
+  if (!dhikr || !count) return 0;
+
+  let reward = count; // base rule: 1 hasanah per dhikr
+
+  
+  // SubhanAllah 100 times = 1000 hasanat
+  if (count >= 100 && dhikr.id === 1) {
+    reward += 1000;
+  }
+  
+  // SubhanAllahi wa bihamdihi 100 times = complete forgiveness
+  if (count >= 100 && dhikr.id === 5) {
+  }
+  
+  // La ilaha illallah 100 times morning = 100 hasanat + 10 slaves freed
+  if (count >= 100 && dhikr.id === 4) {
+    reward += 100;
+  }
+
+  return reward;
 };
 
 /**

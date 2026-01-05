@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Vibration } from 'react-native';
 import { Header } from '../components/Header';
-import { calculateDhikrReward } from '../utils/calculations';
+import { calculateDhikrReward, calculateDhikrRewardValue } from '../utils/calculations';
 import { colors, spacing, fontSize, fontWeight, borderRadius, shadows } from '../styles/theme';
 import { commonStyles } from '../styles/commonStyles';
 
@@ -49,6 +49,8 @@ export const DhikrCounterScreen = ({ onBack, dhikr, onRecord }) => {
     onRecord({
       type: 'dhikr',
       details: `${dhikr.transliteration} (${count}x)`,
+      rewordValue: calculateDhikrRewardValue(dhikr, count),
+      count: count,
       estimatedReward: specialReward || `${count} times`,
     });
 

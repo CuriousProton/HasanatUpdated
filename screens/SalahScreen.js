@@ -6,7 +6,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { Header } from '../components/Header';
 import { BigHadithCard } from '../components/HadithCard';
 import { prayers } from '../data/prayers';
-import { calculateSalahReward } from '../utils/calculations';
+import { calculateSalahReward, calculateSalahRewardValue } from '../utils/calculations';
 import { colors, spacing, fontSize, fontWeight, borderRadius } from '../styles/theme';
 import { commonStyles } from '../styles/commonStyles';
 
@@ -34,6 +34,7 @@ export const SalahScreen = ({ onBack, onRecord }) => {
     onRecord({
       type: 'salah',
       details: `${selectedPrayer.name} ${location}`,
+      rewordValue: calculateSalahRewardValue(selectedPrayer, atMosque),
       estimatedReward: reward,
     });
 

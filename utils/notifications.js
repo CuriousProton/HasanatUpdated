@@ -50,15 +50,59 @@ export const registerForPushNotifications = async () => {
 };
 
 // Count hasanat for today
-export const getTodayHasanatCount = (hasanat) => {
+// export const getTodayHasanatCount = (hasanat) => {
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0);
+
+//   return hasanat.filter(entry => {
+//     const entryDate = new Date(entry.date);
+//     entryDate.setHours(0, 0, 0, 0);
+//     return entryDate.getTime() === today.getTime();
+//   }).length;
+// };
+
+
+
+
+
+
+
+export const getTodayHasanatCount = (entries) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  return hasanat.filter(entry => {
+  return entries.reduce((total, entry) => {
     const entryDate = new Date(entry.date);
     entryDate.setHours(0, 0, 0, 0);
-    return entryDate.getTime() === today.getTime();
-  }).length;
+
+    if (entryDate.getTime() !== today.getTime()) {
+      return total;
+    }
+
+    switch (entry.type) {
+      case 'charity':{
+        // Ensure count is a valid number
+        const count = Number(entry.count);
+        return total + (isNaN(count) ? 1 : count) * 700;
+      }
+      case 'dhikr':
+        return total + (Number(entry.rewordValue) || 0);
+
+      case 'salah':
+        return total + (Number(entry.rewordValue) || 0);
+
+      case 'kindness':
+        return total + 700;
+
+      case 'fasting':
+        return total + 1;
+      case 'quran':
+        return total + (Number(entry.rewordValue) || 0);
+
+      default:
+        return total;
+    }
+  }, 0);
 };
 
 // Schedule daily notification at 9 PM

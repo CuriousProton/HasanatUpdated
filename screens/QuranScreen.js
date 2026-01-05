@@ -6,7 +6,7 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, Alert 
 import { Header } from '../components/Header';
 import { surahs } from '../data/surahs';
 import { quranHadiths } from '../data/hadiths';
-import { calculateQuranReward } from '../utils/calculations';
+import { calculateQuranReward, calculateQuranRewardValue } from '../utils/calculations';
 import { colors, spacing, fontSize, fontWeight, borderRadius, shadows } from '../styles/theme';
 import { commonStyles } from '../styles/commonStyles';
 
@@ -30,6 +30,7 @@ export const QuranScreen = ({ onBack, onRecord, onNavigate }) => {
     onRecord({
       type: 'quran',
       details: `${selectedSurah.name}${ayahRange}`,
+      rewordValue: calculateQuranRewardValue(selectedSurah, fromAyah, toAyah),
       estimatedReward: reward,
     });
 

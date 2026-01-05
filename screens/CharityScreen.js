@@ -37,6 +37,7 @@ export const CharityScreen = ({ onBack, onRecord, onNavigate }) => {
     onRecord({
       type: 'charity',
       details: details,
+      count: amount ? parseInt(amount) : 1,
       estimatedReward: '700x minimum multiplication',
     });
 

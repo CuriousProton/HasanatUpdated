@@ -67,7 +67,7 @@ export const registerForPushNotifications = async () => {
 
 
 
-export const getTodayHasanatCount = (entries) => {
+export const getTodayHasanatCount = (entries = []) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -142,7 +142,7 @@ export const scheduleDailyNotification = async (hasanat) => {
       trigger,
     });
 
-    console.log('Daily notification scheduled for 9 PM');
+    console.log('Daily notification scheduled for 9 PM', content);
     return true;
   } catch (error) {
     console.error('Error scheduling notification:', error);
